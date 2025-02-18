@@ -72,7 +72,11 @@ const Display = () => {
                   <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                      <Input placeholder="admin@example.com" {...field} />
+                      <Input
+                        placeholder="admin@example.com"
+                        {...field}
+                        disabled={form.formState.isSubmitting}
+                      />
                     </FormControl>
 
                     <FormMessage />
@@ -87,7 +91,11 @@ const Display = () => {
                   <FormItem>
                     <FormLabel>Message</FormLabel>
                     <FormControl>
-                      <Input placeholder="Write here..." {...field} />
+                      <Input
+                        placeholder="Write here..."
+                        {...field}
+                        disabled={form.formState.isSubmitting}
+                      />
                     </FormControl>
 
                     <FormMessage />
@@ -95,7 +103,11 @@ const Display = () => {
                 )}
               />
 
-              <Button type="submit" className="w-full">
+              <Button
+                type="submit"
+                className="w-full"
+                disabled={form.formState.isSubmitting}
+              >
                 Submit
               </Button>
             </form>

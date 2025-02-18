@@ -1,4 +1,11 @@
 import Display from "@/components/Display";
+import { Metadata } from "next";
+
+export const generateMetadata = (): Metadata => {
+  return {
+    title: "Home | Email Send Form",
+  };
+};
 
 const page = () => {
   return (
