@@ -2,11 +2,11 @@
 
 ## Stack
 - Next.js 15.3 App Router (RSC) + React 19.1 + TypeScript 5 + Tailwind CSS 4.1 + shadcn `base-nova` (neutral, CSS variables, `src/app/globals.css`).
-- `bun` (`bun.lock` present); `npm`/`pnpm` work but prefer `bun`. No monorepo, no `opencode.json`, no CI workflows, no tests.
+- `bun` preferred (`bun.lock` present; `npm`/`pnpm` work). Single package, no monorepo, no `opencode.json`, no CI workflows (only `renovate.json:3` `config:recommended`), no tests.
 
 ## Commands
 - `bun run dev` — `next dev --turbopack` on :3000. `bun run build` / `bun run start` / `bun run lint` (`next lint`). `bun run prod` — `rm -rf .next && next lint && next build && next start`.
-- No test/formatter scripts. Typecheck: `bunx tsc --noEmit`. On Windows use `bun run prod` (pwsh handles `rm -rf`) or `Remove-Item -Recurse -Force .next`.
+- No test/formatter scripts. Typecheck: `bunx tsc --noEmit`. On Windows `rm -rf` in `prod` requires pwsh; or `Remove-Item -Recurse -Force .next`.
 
 ## Env
 - Required: `EMAIL_FROM`, `EMAIL_PASS`, `EMAIL_TO` — validated at import `src/lib/env.ts:24` (`serverEnvSchema.parse`). Missing/invalid crashes startup, not just send.
