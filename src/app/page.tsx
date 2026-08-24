@@ -10,7 +10,7 @@ export const generateMetadata = (): Metadata => {
 const page = () => {
   return (
     <>
-      <div className="grid place-items-center h-dvh">
+      <div className="grid min-h-[calc(100dvh-3.5rem)] place-items-center py-8">
         <Display />
       </div>
     </>

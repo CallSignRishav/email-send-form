@@ -4,34 +4,36 @@ import { sendEmail } from "@/hooks/email";
 import { formSchema } from "@/lib/schemas";
 import { FormDataType } from "@/lib/types";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { toast } from "react-toastify";
 import { Button } from "./ui/button";
 import {
   Card,
   CardContent,
   CardDescription,
+  CardFooter,
   CardHeader,
   CardTitle,
 } from "./ui/card";
-import {
-  Form,
-  FormControl,
-  FormField,
-  FormItem,
-  FormLabel,
-  FormMessage,
-} from "./ui/form";
+import { Field, FieldError, FieldGroup, FieldLabel } from "./ui/field";
 import { Input } from "./ui/input";
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupText,
+  InputGroupTextarea,
+} from "./ui/input-group";
+import { Spinner } from "./ui/spinner";
 
 const Display = () => {
   const form = useForm<FormDataType>({
     resolver: zodResolver(formSchema),
-
-    mode: "all",
-
+    mode: "onSubmit",
     defaultValues: {
+      fullName: "",
       email: "",
+      mobile: "",
+      subject: "",
       message: "",
     },
   });
@@ -45,76 +47,182 @@ const Display = () => {
 
     if (success) {
       toast.success(message);
-
       form.reset();
     }
   };
 
   return (
-    <>
-      <Card className="w-[350px]">
-        <CardHeader className="flex flex-col items-center justify-center">
-          <CardTitle>Email Form</CardTitle>
+    <Card className="w-full max-w-[440px]">
+      <CardHeader className="flex flex-col items-center justify-center">
+        <CardTitle>Email Form</CardTitle>
+        <CardDescription>Contact with me</CardDescription>
+      </CardHeader>
 
-          <CardDescription>Contact with me</CardDescription>
-        </CardHeader>
+      <CardContent>
+        <form
+          id="form-rhf-display"
+          onSubmit={form.handleSubmit(formSubmit)}>
+          <FieldGroup>
+            {/* FullName */}
+            <Controller
+              name="fullName"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="form-rhf-display-fullName">
+                    Full Name
+                  </FieldLabel>
+                  <Input
+                    {...field}
+                    id="form-rhf-display-fullName"
+                    aria-invalid={fieldState.invalid}
+                    placeholder="Full Name"
+                    autoComplete="name"
+                    disabled={form.formState.isSubmitting}
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
 
-        <CardContent className="">
-          <Form {...form}>
-            <form
-              onSubmit={form.handleSubmit(formSubmit)}
-              className="space-y-8"
-            >
-              <FormField
-                control={form.control}
-                name="email"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Email</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="admin@example.com"
-                        {...field}
-                        disabled={form.formState.isSubmitting}
-                      />
-                    </FormControl>
+            {/* Email */}
+            <Controller
+              name="email"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="form-rhf-display-email">
+                    Email
+                  </FieldLabel>
+                  <Input
+                    {...field}
+                    id="form-rhf-display-email"
+                    aria-invalid={fieldState.invalid}
+                    type="email"
+                    placeholder="demo@example.com"
+                    autoComplete="email"
+                    disabled={form.formState.isSubmitting}
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
 
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            {/* Mobile */}
+            <Controller
+              name="mobile"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="form-rhf-display-mobile">
+                    Mobile
+                  </FieldLabel>
+                  <Input
+                    {...field}
+                    id="form-rhf-display-mobile"
+                    aria-invalid={fieldState.invalid}
+                    type="tel"
+                    inputMode="numeric"
+                    placeholder="9876543210"
+                    autoComplete="tel"
+                    disabled={form.formState.isSubmitting}
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
 
-              <FormField
-                control={form.control}
-                name="message"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Message</FormLabel>
-                    <FormControl>
-                      <Input
-                        placeholder="Write here..."
-                        {...field}
-                        disabled={form.formState.isSubmitting}
-                      />
-                    </FormControl>
+            {/* Subject */}
+            <Controller
+              name="subject"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="form-rhf-display-subject">
+                    Subject
+                  </FieldLabel>
+                  <Input
+                    {...field}
+                    id="form-rhf-display-subject"
+                    aria-invalid={fieldState.invalid}
+                    placeholder="Subject"
+                    autoComplete="off"
+                    disabled={form.formState.isSubmitting}
+                  />
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
 
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            {/* Message */}
+            <Controller
+              name="message"
+              control={form.control}
+              render={({ field, fieldState }) => (
+                <Field data-invalid={fieldState.invalid}>
+                  <FieldLabel htmlFor="form-rhf-display-message">
+                    Message
+                  </FieldLabel>
 
-              <Button
-                type="submit"
-                className="w-full"
-                disabled={form.formState.isSubmitting}
-              >
-                Submit
-              </Button>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
-    </>
+                  <InputGroup>
+                    <InputGroupTextarea
+                      {...field}
+                      id="form-rhf-display-message"
+                      aria-invalid={fieldState.invalid}
+                      placeholder="Write your message..."
+                      rows={6}
+                      className="min-h-24 resize-none"
+                      disabled={form.formState.isSubmitting}
+                    />
+
+                    <InputGroupAddon align="block-end">
+                      <InputGroupText className="tabular-nums">
+                        {field.value.length}/2000 characters
+                      </InputGroupText>
+                    </InputGroupAddon>
+                  </InputGroup>
+
+                  {fieldState.invalid && (
+                    <FieldError errors={[fieldState.error]} />
+                  )}
+                </Field>
+              )}
+            />
+          </FieldGroup>
+        </form>
+      </CardContent>
+
+      <CardFooter>
+        <Field orientation="horizontal">
+          {/* Reset & Submit */}
+          <Button
+            type="button"
+            variant="outline"
+            onClick={() => form.reset()}
+            disabled={form.formState.isSubmitting}>
+            Reset
+          </Button>
+
+          <Button
+            type="submit"
+            form="form-rhf-display"
+            disabled={form.formState.isSubmitting}>
+            {form.formState.isSubmitting && (
+              <Spinner data-icon="inline-start" />
+            )}
+            {form.formState.isSubmitting ? "Submitting..." : "Submit"}
+          </Button>
+        </Field>
+      </CardFooter>
+    </Card>
   );
 };
 
