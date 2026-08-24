@@ -23,15 +23,20 @@ import {
   FormMessage,
 } from "./ui/form";
 import { Input } from "./ui/input";
+import { Spinner } from "./ui/spinner";
+import { Textarea } from "./ui/textarea";
 
 const Display = () => {
   const form = useForm<FormDataType>({
     resolver: zodResolver(formSchema),
 
-    mode: "all",
+    mode: "onSubmit",
 
     defaultValues: {
+      fullName: "",
       email: "",
+      mobile: "",
+      subject: "",
       message: "",
     },
   });
@@ -52,19 +57,38 @@ const Display = () => {
 
   return (
     <>
-      <Card className="w-[350px]">
+      <Card className="w-full max-w-[440px]">
         <CardHeader className="flex flex-col items-center justify-center">
           <CardTitle>Email Form</CardTitle>
 
           <CardDescription>Contact with me</CardDescription>
         </CardHeader>
 
-        <CardContent className="">
+        <CardContent>
           <Form {...form}>
             <form
               onSubmit={form.handleSubmit(formSubmit)}
-              className="space-y-8"
-            >
+              className="space-y-5">
+              <FormField
+                control={form.control}
+                name="fullName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Full Name</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Full Name"
+                        autoComplete="name"
+                        {...field}
+                        disabled={form.formState.isSubmitting}
+                      />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <FormField
                 control={form.control}
                 name="email"
@@ -73,7 +97,50 @@ const Display = () => {
                     <FormLabel>Email</FormLabel>
                     <FormControl>
                       <Input
-                        placeholder="admin@example.com"
+                        type="email"
+                        placeholder="demo@example.com"
+                        autoComplete="email"
+                        {...field}
+                        disabled={form.formState.isSubmitting}
+                      />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="mobile"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Mobile</FormLabel>
+                    <FormControl>
+                      <Input
+                        type="tel"
+                        inputMode="numeric"
+                        placeholder="9876543210"
+                        autoComplete="tel"
+                        {...field}
+                        disabled={form.formState.isSubmitting}
+                      />
+                    </FormControl>
+
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={form.control}
+                name="subject"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Subject</FormLabel>
+                    <FormControl>
+                      <Input
+                        placeholder="Subject"
                         {...field}
                         disabled={form.formState.isSubmitting}
                       />
@@ -91,8 +158,10 @@ const Display = () => {
                   <FormItem>
                     <FormLabel>Message</FormLabel>
                     <FormControl>
-                      <Input
-                        placeholder="Write here..."
+                      <Textarea
+                        placeholder="Write your message..."
+                        rows={4}
+                        className="resize-none min-h-[100px]"
                         {...field}
                         disabled={form.formState.isSubmitting}
                       />
@@ -106,9 +175,11 @@ const Display = () => {
               <Button
                 type="submit"
                 className="w-full"
-                disabled={form.formState.isSubmitting}
-              >
-                Submit
+                disabled={form.formState.isSubmitting}>
+                {form.formState.isSubmitting && (
+                  <Spinner data-icon="inline-start" />
+                )}
+                {form.formState.isSubmitting ? "Submitting..." : "Submit"}
               </Button>
             </form>
           </Form>

@@ -74,11 +74,17 @@ export type TemplateResult = {
 };
 
 export function adminTemplate(data: {
+  fullName: string;
   email: string;
+  mobile: string;
+  subject: string;
   message: string;
   receivedAt?: Date;
 }): TemplateResult {
+  const safeFullName = escapeHtml(data.fullName);
   const safeEmail = escapeHtml(data.email);
+  const safeMobile = escapeHtml(data.mobile);
+  const safeSubject = escapeHtml(data.subject);
   const safeMessage = escapeHtml(data.message);
   const when = (data.receivedAt ?? new Date()).toLocaleString("en-US", {
     dateStyle: "medium",
@@ -91,8 +97,26 @@ export function adminTemplate(data: {
     <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
       <tr>
         <td style="padding-bottom:10px;">
+          <div style="font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:#6b7280;">Full Name</div>
+          <div style="margin-top:4px;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:14px;color:#111827;">${safeFullName}</div>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding-bottom:10px;">
           <div style="font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:#6b7280;">From</div>
           <div style="margin-top:4px;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:14px;color:#111827;"><a href="mailto:${safeEmail}" style="color:#111827;text-decoration:underline;">${safeEmail}</a></div>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding-bottom:10px;">
+          <div style="font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:#6b7280;">Mobile</div>
+          <div style="margin-top:4px;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:14px;color:#111827;"><a href="tel:${safeMobile}" style="color:#111827;text-decoration:none;">${safeMobile}</a></div>
+        </td>
+      </tr>
+      <tr>
+        <td style="padding-bottom:10px;">
+          <div style="font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:#6b7280;">Subject</div>
+          <div style="margin-top:4px;font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:14px;color:#111827;">${safeSubject}</div>
         </td>
       </tr>
       <tr>
@@ -111,7 +135,7 @@ export function adminTemplate(data: {
   `;
 
   const html = baseLayout({
-    preheader: `New message from ${data.email} - ${when}`,
+    preheader: `New message from ${data.fullName} (${data.email}) - ${when}`,
     title: "New contact form submission",
     intro:
       "You received a new message via the website contact form. Reply directly to respond to the sender.",
@@ -121,7 +145,10 @@ export function adminTemplate(data: {
 
   const text =
     `New contact form submission\n` +
+    `Full Name: ${data.fullName}\n` +
     `From: ${data.email}\n` +
+    `Mobile: ${data.mobile}\n` +
+    `Subject: ${data.subject}\n` +
     `Received: ${when}\n\n` +
     `Message:\n${data.message}\n`;
 
@@ -129,16 +156,35 @@ export function adminTemplate(data: {
 }
 
 export function receiptTemplate(data: {
+  fullName: string;
   email: string;
+  mobile: string;
+  subject: string;
   message: string;
 }): TemplateResult {
+  const safeFullName = escapeHtml(data.fullName);
+  const safeEmail = escapeHtml(data.email);
+  const safeMobile = escapeHtml(data.mobile);
+  const safeSubject = escapeHtml(data.subject);
   const safeMessage = escapeHtml(data.message);
   const subject = "We received your message";
 
   const bodyHtml = `
     <div style="font-family:ui-sans-serif,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;font-size:14px;line-height:1.7;color:#111827;">
-      <p style="margin:0 0 10px 0;">Thanks for reaching out - we received your message and will get back to you as soon as possible.</p>
+      <p style="margin:0 0 10px 0;">Hi ${safeFullName}, thanks for reaching out - we received your message and will get back to you as soon as possible.</p>
       <p style="margin:0 0 12px 0;color:#374151;">Here is a copy for your records:</p>
+      <div style="border:1px solid #e5e7eb;border-radius:6px;padding:12px;background-color:#f9fafb;margin-bottom:12px;">
+        <table role="presentation" cellpadding="0" cellspacing="0" border="0" width="100%">
+          <tr><td style="padding-bottom:6px;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:#6b7280;">Full Name</td></tr>
+          <tr><td style="padding-bottom:10px;font-size:14px;color:#111827;">${safeFullName}</td></tr>
+          <tr><td style="padding-bottom:6px;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:#6b7280;">Email</td></tr>
+          <tr><td style="padding-bottom:10px;font-size:14px;color:#111827;">${safeEmail}</td></tr>
+          <tr><td style="padding-bottom:6px;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:#6b7280;">Mobile</td></tr>
+          <tr><td style="padding-bottom:10px;font-size:14px;color:#111827;">${safeMobile}</td></tr>
+          <tr><td style="padding-bottom:6px;font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:#6b7280;">Subject</td></tr>
+          <tr><td style="padding-bottom:10px;font-size:14px;color:#111827;">${safeSubject}</td></tr>
+        </table>
+      </div>
       <div style="border-left:3px solid #e5e7eb;padding:10px 12px;background-color:#ffffff;border-radius:4px;">
         <div style="font-size:12px;letter-spacing:0.06em;text-transform:uppercase;color:#6b7280;margin-bottom:4px;">Your message</div>
         <div style="font-size:14px;line-height:1.7;color:#111827;white-space:pre-wrap;">${safeMessage}</div>
@@ -159,6 +205,11 @@ export function receiptTemplate(data: {
 
   const text =
     `Thanks for reaching out - we received your message.\n\n` +
+    `Hi ${data.fullName},\n\n` +
+    `Full Name: ${data.fullName}\n` +
+    `Email: ${data.email}\n` +
+    `Mobile: ${data.mobile}\n` +
+    `Subject: ${data.subject}\n\n` +
     `Your message:\n${data.message}\n\n` +
     `We typically reply within 1-2 business days.\n`;
 

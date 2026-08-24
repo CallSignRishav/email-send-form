@@ -18,8 +18,20 @@ const transporter = nodemailer.createTransport({
 });
 
 export const sendEmail = async (fData: FormDataType) => {
-  const admin = adminTemplate({ email: fData.email, message: fData.message });
-  const receipt = receiptTemplate({ email: fData.email, message: fData.message });
+  const admin = adminTemplate({
+    fullName: fData.fullName,
+    email: fData.email,
+    mobile: fData.mobile,
+    subject: fData.subject,
+    message: fData.message,
+  });
+  const receipt = receiptTemplate({
+    fullName: fData.fullName,
+    email: fData.email,
+    mobile: fData.mobile,
+    subject: fData.subject,
+    message: fData.message,
+  });
 
   try {
     await transporter.sendMail({
