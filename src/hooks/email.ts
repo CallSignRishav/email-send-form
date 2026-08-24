@@ -1,32 +1,43 @@
 "use server";
 
-import { env } from "@/lib/env";
-import { FormDataType } from "@/lib/types";
-import { createTransport } from "nodemailer";
+import { adminTemplate, receiptTemplate } from "@/lib/email-templates";
+import { serverEnv } from "@/lib/env";
+import type { FormDataType } from "@/lib/types";
+import nodemailer from "nodemailer";
+
+// Gmail App Password – uses well-known service "gmail" (smtp.gmail.com:465 secure:true)
+// https://nodemailer.com/guides/using-gmail#app-password-requires-2-step-verification
+// https://nodemailer.com/smtp/well-known-services
+
+const transporter = nodemailer.createTransport({
+  service: "gmail",
+  auth: {
+    user: serverEnv.EMAIL_FROM,
+    pass: serverEnv.EMAIL_PASS, // 16-char App Password (2-Step Verification required, spaces stripped by zod)
+  },
+});
 
 export const sendEmail = async (fData: FormDataType) => {
-  const transporter = createTransport({
-    host: env.HOST,
-    port: 465,
-    secure: true,
-    auth: {
-      user: env.EMAIL_FROM,
-      pass: env.EMAIL_PASS,
-    },
-  });
-
-  const html = ` 
-    <div><strong>Email ID : </strong><span>${fData.email}</span></div>
-    <div><strong>Message : </strong><span>${fData.message}</span></div>  
-  `;
+  const admin = adminTemplate({ email: fData.email, message: fData.message });
+  const receipt = receiptTemplate({ email: fData.email, message: fData.message });
 
   try {
     await transporter.sendMail({
-      from: env.EMAIL_FROM,
-      to: env.EMAIL_TO,
-      subject: `Email send by - ${fData.email}`,
-      text: `${fData.email}`,
-      html: html,
+      from: serverEnv.EMAIL_FROM,
+      to: serverEnv.EMAIL_TO,
+      replyTo: fData.email,
+      subject: admin.subject,
+      text: admin.text,
+      html: admin.html,
+    });
+
+    await transporter.sendMail({
+      from: serverEnv.EMAIL_FROM,
+      to: fData.email,
+      replyTo: serverEnv.EMAIL_TO,
+      subject: receipt.subject,
+      text: receipt.text,
+      html: receipt.html,
     });
 
     return {
@@ -34,8 +45,7 @@ export const sendEmail = async (fData: FormDataType) => {
       message: "Email sent successfully",
     };
   } catch (error) {
-    console.log(error);
-
+    console.error("sendEmail failed:", error);
     return {
       success: false,
       message: "Error sending email",
