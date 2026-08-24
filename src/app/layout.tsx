@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
 import "./globals.css";
+import Header from "@/components/Header";
 import { ThemeProvider } from "@/components/ThemeProvider";
 import { Geist } from "next/font/google";
 import { cn } from "@/lib/utils";
@@ -19,8 +20,10 @@ const RootLayout = ({ children }: RootLayoutProps) => {
           attribute="class"
           defaultTheme="dark"
           enableSystem={false}
+          disableTransitionOnChange
         >
-          <main>{children}</main>
+          <Header />
+          <main className="pt-14">{children}</main>
         </ThemeProvider>
       </body>
     </html>
